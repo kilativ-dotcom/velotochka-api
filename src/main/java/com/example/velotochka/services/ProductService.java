@@ -33,7 +33,10 @@ public class ProductService {
         for (Feature feature : product.getFeatures()) {
             feature.setProduct(product);
             if ("product".equals(feature.getType())) {
-                feature.setValueProduct(productRepository.findById(Long.parseLong(feature.getValue())).get());
+                feature.setValueProduct(
+                        productRepository.findById(Long.parseLong(feature.getValue()))
+                                .orElseThrow(() -> new ProductNotFoundException(Long.parseLong(feature.getValue())))
+                );
             }
         }
         Category category = product.getCategory();
