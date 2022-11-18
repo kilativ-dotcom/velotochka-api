@@ -1,6 +1,5 @@
 package com.example.velotochka.controllers;
 
-import com.example.velotochka.entities.Category;
 import com.example.velotochka.entities.Product;
 import com.example.velotochka.services.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,11 +31,11 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "")  MultiValueMap<String, String> features,
             Pageable pageable
     ) {
-        features.remove("category");
-        features.remove("price>");
-        features.remove("price<");
-        features.remove("name");
-
+        for (String key : features.keySet()) {
+            if (!key.startsWith("feature")) {
+                features.remove(key);
+            }
+        }
         return createResponseEntity(() -> productService.findProducts(
                 categories,
                 minPrices,

@@ -1,6 +1,7 @@
 package com.example.velotochka.services;
 
 import com.example.velotochka.entities.Category;
+import com.example.velotochka.entities.Feature;
 import com.example.velotochka.entities.Image;
 import com.example.velotochka.entities.Product;
 import com.example.velotochka.exceptions.CategoryNotFoundException;
@@ -29,6 +30,12 @@ public class ProductService {
     private CategoryService categoryService;
 
     public ProductModel saveProduct(Product product, Set<MultipartFile> files) throws RuntimeException {
+        for (Feature feature : product.getFeatures()) {
+            feature.setProduct(product);
+            if ("product".equals(feature.getType())) {
+                feature.setValueProduct(productRepository.findById(Long.parseLong(feature.getValue())).get());
+            }
+        }
         Category category = product.getCategory();
         if (category != null) {
             Optional<Category> categoryOptional = categoryService.findByName(category.getName());

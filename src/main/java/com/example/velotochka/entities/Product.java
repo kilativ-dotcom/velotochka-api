@@ -29,8 +29,9 @@ public class Product {
     @ElementCollection
     private Set<Image> images;
 
-    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
     private List<Feature> features;
+
 
     public Product() {}
 
@@ -87,7 +88,7 @@ public class Product {
     public Map<String, List<Object>> getFeaturesMap() {
         Map<String, List<Object>> result = new HashMap<>();
         for (Feature f : features) {
-            result.computeIfAbsent(f.name, k -> new ArrayList<>()).add(f.getConvertedValue());
+            result.computeIfAbsent(f.getName(), k -> new ArrayList<>()).add(f.getConvertedValue());
         }
         return result;
     }

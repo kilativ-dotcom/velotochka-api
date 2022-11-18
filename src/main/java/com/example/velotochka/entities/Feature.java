@@ -1,13 +1,31 @@
 package com.example.velotochka.entities;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
-@Embeddable
+@Entity
 public class Feature {
-    String name;
-    String value;
-    String type;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String value;
+    private String type;
+
+    @OneToOne
+    @JoinColumn(name = "valueProduct", referencedColumnName = "id")
+    private Product valueProduct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -33,12 +51,33 @@ public class Feature {
         this.type = type;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Product getValueProduct() {
+        return valueProduct;
+    }
+
+    public void setValueProduct(Product valueProduct) {
+        this.valueProduct = valueProduct;
+    }
+
     @Transient
     Object getConvertedValue() {
-        if ("double".equals(type)) {
-            return Double.parseDouble(value);
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException eInt){
+            try {
+                return Double.parseDouble(value);
+            } catch (NumberFormatException eDouble){
+                return value;
+            }
         }
-        // String is the default
-        return value;
+
     }
 }
